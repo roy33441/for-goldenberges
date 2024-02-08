@@ -153,7 +153,7 @@
             <h3>Result:</h3>
             <p>Amount to get in CRC: ${amountToGetCRC.toFixed(2)} CRC. don't be sucker</p>
             <br>
-            <p>If you are big shot and want tipping (${tipPrecentage}%) give them: ${priceToPay* exchangeRate * tipPrecentage / 100}</p>
+            <p>If you are big shot and want tipping (${tipPrecentage}%) give them: ${(priceToPay* exchangeRate * tipPrecentage / 100).toFixed(2)} CRC</p>
         `;
                 })
                 .catch(error => {
