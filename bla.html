@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Conversion Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            flex-direction: column;
+        }
+
+        #container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"] {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button[type="submit"] {
+            background-color: #1E90ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1E90ff;
+        }
+
+        #rights {
+            margin: 30px 0 30px 0;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            font-weight: bold;
+            background-image: linear-gradient(
+                45deg,
+                #CA4246 16.666%, 
+                #E16541 16.666%, 
+                #E16541 33.333%, 
+                #F18F43 33.333%, 
+                #F18F43 50%, 
+                #8B9862 50%, 
+                #8B9862 66.666%, 
+                #476098 66.666%, 
+                #476098 83.333%, 
+                #A7489B 83.333%);
+  
+            /* Set the background size and repeat properties. */
+            background-size: 100%;
+            background-repeat: repeat;
+
+            /* Use the text as a mask for the background. */
+            /* This will show the gradient as a text color rather than element bg. */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; 
+            
+            /* Animate the text when loading the element. */
+            /* This animates it on page load and when hovering out. */
+            animation: rainbow-text-simple-animation-rev 0.75s ease forwards;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        #result h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #result p {
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h2>Currency Conversion Form</h2>
+        <form id="currencyForm">
+            <label for="priceGiven">Price Given (USD):</label>
+            <input type="number" id="priceGiven" name="priceGiven" step="0.01" required>
+            <label for="priceToPay">Price to Pay (USD):</label>
+            <input type="number" id="priceToPay" name="priceToPay" step="0.01" required>
+            <label for="tipping">Tip: </label>
+            <input type="number" id="tipPrecentage" name="tipPrecentage" value="10" min="0" max="100">
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <p id="rights">All rights reserved Royky™</p>
+
+    <script>
+        document.getElementById('currencyForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Get the values from the form
+            const priceGiven = parseFloat(document.getElementById('priceGiven').value);
+            const priceToPay = parseFloat(document.getElementById('priceToPay').value);
+            const tipPrecentage = parseFloat(document.getElementById('tipPrecentage').value);
+
+            // Check if the values are valid
+            if (isNaN(priceGiven) || isNaN(priceToPay)) {
+                alert('Please enter valid numbers for the prices.');
+                return;
+            }
+
+            // Fetch the latest exchange rates from the Open Exchange Rates API
+            fetch('https://open.er-api.com/v6/latest/USD')
+                .then(response => response.json())
+                .then(data => {
+                    // Get the exchange rate for USD to CRC
+                    const exchangeRate = data.rates.CRC;
+
+                    // Calculate the amount to get in CRC
+                    const amountToGetCRC = (priceGiven - priceToPay) * exchangeRate;
+
+                    // Display the result
+                    document.getElementById('result').innerHTML = `
+            <h3>Result:</h3>
+            <p>Amount to get in CRC: ${amountToGetCRC.toFixed(2)} CRC. don't be sucker</p>
+            <br>
+            <p>If you are big shot and want tipping (${tipPrecentage}%) give them: ${priceToPay* exchangeRate * tipPrecentage / 100}</p>
+        `;
+                })
+                .catch(error => {
+                    console.error('Error fetching exchange rates:', error);
+                    alert('Error fetching exchange rates. Please try again later.');
+                });
+        });
+    </script>
+</body>
+
+</html>
